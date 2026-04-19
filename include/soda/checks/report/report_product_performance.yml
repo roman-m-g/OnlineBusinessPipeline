@@ -16,7 +16,7 @@ checks for report_product_performance:
   - missing_count(stock_code) = 0:
       name: All products have a stock code
   - failed rows:
-      name: No negative revenue
+      name: No negative revenue values
       fail query: |
         SELECT stock_code, total_revenue_gbp
         FROM report_product_performance

@@ -4,6 +4,6 @@ checks for report_monthly_revenue:
         when required column missing: [year, month, num_invoices, total_quantity, total_revenue_gbp,total_revenue_usd,total_revenue_eur]
   - row_count > 0
   - missing_count(year) = 0:
-      name: All rows have a year
+      name: all rows have a year 
   - missing_count(month) = 0:
-      name: All rows have a month
+      name: all rows have a month 

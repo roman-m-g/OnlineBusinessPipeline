@@ -1,0 +1,17 @@
+services:
+  scheduler:
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+  api-server:
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+  triggerer:
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+  dag-processor:
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4

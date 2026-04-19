@@ -20,7 +20,7 @@ checks for report_customer_segments:
   - duplicate_count(customer_id) = 0:
       name: One row per customer
   - failed rows:
-      name: No negative average order value
+      name: No negative average order values
       fail query: |
         SELECT customer_id, avg_order_value_gbp
         FROM report_customer_segments

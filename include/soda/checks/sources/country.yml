@@ -1,5 +1,23 @@
 checks for country:
+  - schema:
+      fail:
+        when required column missing: [id, iso, name, nicename, iso3, numcode, phonecode]
+        when wrong column type:
+          id: integer
+          iso: string
+          name: string
+          nicename: string
+          iso3: string
+          numcode: integer
+          phonecode: integer
   - row_count > 0
-  - missing_count(id) = 0
-  - missing_count(iso) = 0
-  - missing_count(nicename) = 0
+  - missing_count(id) = 0:
+      name: All countries have an id
+  - missing_count(iso) = 0:
+      name: All countries have an ISO code
+  - missing_count(nicename) = 0:
+      name: All countries have a nicename
+  - duplicate_count(id) = 0:
+      name: No duplicate country ids
+  - duplicate_count(iso) = 0:
+      name: No duplicate ISO codes

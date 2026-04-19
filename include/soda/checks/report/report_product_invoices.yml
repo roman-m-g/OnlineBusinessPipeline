@@ -4,4 +4,4 @@ checks for report_product_invoices:
         when required column missing: [product_id, stock_code, description, total_quantity_sold]
   - row_count > 0
   - missing_count(product_id) = 0:
-      name: All rows have a product
+      name: all rows have a product
