@@ -305,7 +305,7 @@ Soda picks up all `.yml` files in the directory automatically — no code change
 ## Google Data Studio (Looker) reporting 
 
 
-![DataStudioRevenueReport](pics/DataStudioRevenueReport.png.png)
+![DataStudioRevenueReport](pics/DataStudioRevenueReport.png)
 
 18,532 total invoices processed
 5,167,812 total units sold across all orders
