@@ -1,0 +1,23 @@
+checks for report_product_performance:
+  - schema:
+      fail:
+        when required column missing:
+          [stock_code, description, total_quantity_sold, num_invoices,
+           total_revenue_gbp, total_revenue_usd, total_revenue_eur]
+        when wrong column type:
+          stock_code: string
+          description: string
+          total_quantity_sold: int
+          num_invoices: int
+          total_revenue_gbp: float64
+          total_revenue_usd: float64
+          total_revenue_eur: float64
+  - row_count > 0
+  - missing_count(stock_code) = 0:
+      name: All products have a stock code
+  - failed rows:
+      name: No negative revenue
+      fail query: |
+        SELECT stock_code, total_revenue_gbp
+        FROM report_product_performance
+        WHERE total_revenue_gbp < 0

@@ -162,7 +162,7 @@ The dbt project implements a **star schema** in BigQuery. All models are materia
 |---|---|
 | `dim_customers` | Distinct customers with surrogate key from `CustomerID + Country`. Joins to `country` table for ISO code. Excludes null customer IDs. |
 | `dim_product` | Distinct products with surrogate key from `StockCode + Description + UnitPrice`. Excludes null codes and zero/negative prices. |
-| `dim_datetime` | Parsed invoice timestamps with extracted year, month, day, hour, minute, weekday. Handles two raw date formats. |
+| `dim_datetime` | Parsed invoice timestamps with extracted year, month, day, hour, minute, weekday. Uses `SAFE.PARSE_DATETIME` with `COALESCE` across two date formats — malformed dates produce NULL instead of crashing. |
 | `dim_currency_rates` | Distinct monthly GBP→USD and GBP→EUR exchange rates from `raw_currency_rates`. |
 | `fct_invoices` | Central fact table joining all dimensions. Calculates `total = Quantity × UnitPrice` and converts to GBP, USD, EUR by matching `year_month` to currency rates. Excludes negative quantities (cancellations). |
 
@@ -211,7 +211,7 @@ Airflow task (@task.external_python)
 | Table | Check type | Detail |
 |---|---|---|
 | `raw_invoices` | Schema | Required columns: InvoiceNo, StockCode, Quantity, InvoiceDate, UnitPrice, CustomerID, Country |
-| `raw_invoices` | Schema | Column types: Quantity → integer, UnitPrice/CustomerID → float64, others → string |
+| `raw_invoices` | Schema | Column types: Quantity → integer, UnitPrice → float64, CustomerID → string, others → string |
 | `raw_currency_rates` | Schema | Required columns: year_month, avg_rate_gpb_usd, avg_rate_gpb_eur |
 | `raw_currency_rates` | Schema | Column types: year_month → string, rates → float64 |
 | `country` | Nulls | No nulls in id, iso, nicename · row_count > 0 |
@@ -227,6 +227,9 @@ Airflow task (@task.external_python)
 | `fct_invoices` | Schema | Column types: IDs → string, quantity → int, total_invoice_gbp → float64 |
 | `fct_invoices` | Nulls | No nulls in invoice_id |
 | `fct_invoices` | Custom SQL | No rows where total_invoice_gbp < 0 (catches unfiltered cancellations) |
+| `dim_currency_rates` | Schema | Required columns: year_month, avg_rate_gpb_usd, avg_rate_gpb_eur · types: string / float64 |
+| `dim_currency_rates` | Uniqueness | No duplicate year_month entries |
+| `dim_currency_rates` | Custom SQL | No zero or negative exchange rates |
 
 **Report** — run after dbt report models
 
@@ -234,7 +237,14 @@ Airflow task (@task.external_python)
 |---|---|---|
 | `report_monthly_revenue` | Schema | Required columns: year, month, num_invoices, total_quantity, total_revenue_gbp, total_revenue_usd, total_revenue_eur |
 | `report_monthly_revenue` | Row count | row_count > 0 |
-| `report_monthly_revenue` | Nulls | No nulls in month |
+| `report_monthly_revenue` | Nulls | No nulls in year · no nulls in month |
+| `report_product_performance` | Schema | Required columns: stock_code, description, total_quantity_sold, num_invoices, total_revenue_gbp, total_revenue_usd, total_revenue_eur |
+| `report_product_performance` | Nulls | No nulls in stock_code |
+| `report_product_performance` | Custom SQL | No negative revenue |
+| `report_customer_segments` | Schema | Required columns: customer_id, country, iso, num_orders, total_quantity, total_revenue_gbp/usd/eur, avg_order_value_gbp |
+| `report_customer_segments` | Uniqueness | One row per customer_id |
+| `report_customer_segments` | Nulls | No nulls in customer_id |
+| `report_customer_segments` | Custom SQL | No negative avg_order_value_gbp |
 
 ### Adding new checks
 

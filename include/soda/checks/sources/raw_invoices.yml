@@ -8,5 +8,5 @@ checks for raw_invoices:
           Quantity: integer
           InvoiceDate: string
           UnitPrice: float64
-          CustomerID: float64
+          CustomerID: string
           Country: string

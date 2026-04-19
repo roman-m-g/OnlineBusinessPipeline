@@ -77,7 +77,7 @@ def online_business():
                 },
             }
         }
-        hook.insert_job(configuration=job_config)
+        hook.insert_job(configuration=job_config).result()
 
     @task
     def create_online_business_dataset() -> None:
@@ -113,13 +113,13 @@ def online_business():
                         {'name': 'Quantity',     'type': 'INTEGER', 'mode': 'NULLABLE'},
                         {'name': 'InvoiceDate',  'type': 'STRING',  'mode': 'NULLABLE'},
                         {'name': 'UnitPrice',    'type': 'FLOAT',   'mode': 'NULLABLE'},
-                        {'name': 'CustomerID',   'type': 'FLOAT',   'mode': 'NULLABLE'},
+                        {'name': 'CustomerID',   'type': 'STRING',  'mode': 'NULLABLE'},
                         {'name': 'Country',      'type': 'STRING',  'mode': 'NULLABLE'},
                     ]
                 },
             }
         }
-        hook.insert_job(configuration=job_config)
+        hook.insert_job(configuration=job_config).result()
 
     @task
     def gcs_currency_rates_to_bq_raw() -> None:
@@ -145,7 +145,7 @@ def online_business():
                 },
             }
         }
-        hook.insert_job(configuration=job_config)
+        hook.insert_job(configuration=job_config).result()
 
     @task.external_python(python='/usr/local/airflow/soda_venv/bin/python')
     def check_load(scan_name='check_load', checks_subpath='sources'):

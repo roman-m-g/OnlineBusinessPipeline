@@ -1,17 +1,10 @@
--- Create a CTE to extract date and time components
-WITH datetime_cte AS (  
+WITH datetime_cte AS (
   SELECT DISTINCT
     InvoiceDate AS datetime_id,
-    CASE
-      WHEN LENGTH(InvoiceDate) = 16 THEN
-        -- Date format: "DD/MM/YYYY HH:MM"
-        PARSE_DATETIME('%m/%d/%Y %H:%M', InvoiceDate)
-      WHEN LENGTH(InvoiceDate) <= 14 THEN
-        -- Date format: "MM/DD/YY HH:MM"
-        PARSE_DATETIME('%m/%d/%y %H:%M', InvoiceDate)
-      ELSE
-        NULL
-    END AS date_part,
+    COALESCE(
+      SAFE.PARSE_DATETIME('%m/%d/%Y %H:%M', InvoiceDate),
+      SAFE.PARSE_DATETIME('%m/%d/%y %H:%M', InvoiceDate)
+    ) AS date_part
   FROM {{ source('online_business', 'raw_invoices') }}
   WHERE InvoiceDate IS NOT NULL
 )
