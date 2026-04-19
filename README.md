@@ -16,3 +16,37 @@ An online business operates across multiple countries and accumulates transactio
 ## Data Quality testing (Soda-core)
 
 ## Data Studio (Looker) reporting 
+
+
+## Reproducibility Steps
+
+Step 1: Clone repo 
+
+### Provision Infrastructure with Terraform (first time)
+```
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+#### Clean up
+```
+cd terraform
+terraform destroy
+```
+## Prerequisites
+
+```
+1 GCP Account (billing enabled)
+2 Service Account with roles: Storage Admin, BigQuery Admin
+3 Service Account Key (JSON) saved as keys/de-project-creds.json
+4 Terraform installed
+5 Docker and Docker Compose
+6 Python 3.12+
+7 Google Data Studio
+```
+
+Step 2: astro cli
+
+
