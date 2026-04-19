@@ -110,9 +110,15 @@ OnlineBusinessPipeline/
 │   │       │   └── country.yml
 │   │       ├── transform/          
 │   │       │   ├── dim_customers.yml
+│   │       │   ├── dim_product.yml
+│   │       │   ├── dim_datetime.yml
+│   │       │   ├── dim_currency_rates.yml
 │   │       │   └── fct_invoices.yml
 │   │       └── report/             
-│   │           └── report_monthly_revenue.yml
+│   │           ├── report_monthly_revenue.yml
+│   │           ├── report_product_performance.yml
+│   │           ├── report_product_invoices.yml
+│   │           └── report_customer_segments.yml
 │   │
 │   └── keys/                      
 │       └── de-project-creds.json
@@ -371,9 +377,11 @@ AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT=120
 astro dev restart    -- astro dev start        -- astro dev stop
 ```
 
-debug error - might need it - remove the old project containers manually and then restart.
+debug: if stale containers block startup, remove them manually then restart.
 ```
-astro dev restart --remove-orphans
+docker ps -a | grep airflow
+docker rm <container_id>
+astro dev restart
 ```
 
 
