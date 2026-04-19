@@ -38,7 +38,7 @@ The pipeline follows an **ELT** pattern: raw data is landed in a cloud data lake
 │ invoices.csv │    │ raw/*.csv  │    │ raw_invoices   │    │ dim_customers   │    │ report_country  │    │  Dashboards  │
 │ country.csv  │    │            │    │ raw_currency   │    │ dim_product     │    │ report_monthly  │    │  connected   │
 │ currency.csv │    │            │    │ country        │    │ dim_datetime    │    │ report_customer │    │  to BigQuery │
-└──────────────┘    └────────────┘    └───────┬────────┘    │ fct_invoices   │    │ report_product  │    └──────────────┘
+└──────────────┘    └────────────┘    └───────┬────────┘    │ fct_invoices    │    │ report_product  │    └──────────────┘
                                               │             └────────┬────────┘    └────────┬────────┘
                                        Soda check_load        Soda check_transform    Soda check_report
                                        ✓ pass → next           ✓ pass → next           ✓ pass → next
@@ -307,7 +307,7 @@ The large dark bubble sitting over Western Europe is UK. The smaller, lighter bu
 
 ## Reproducibility Steps
 
-Step 1: Clone repo and configure
+### Step 1: Clone repo and configure
 
 ```
 git clone git@github.com:roman-m-g/OnlineBusinessPipeline.git
@@ -339,7 +339,7 @@ terraform apply
 7 Google Data Studio
 ```
 
-Step 2: Install and setup astro cli
+### Step 2: Install and setup Astro CLI
 
 https://github.com/astronomer/astro-cli
 
@@ -369,11 +369,11 @@ astro dev restart --remove-orphans
 
 
 
-Step 3: Get datasets and save to include/dataset/   
+### Step 3: Get datasets and save to include/dataset/   
 
 1 online_business.csv 
 
-Data loaded from https://www.kaggle.com/datasets/tunguz/online-retail and converted to utf-8 and saved to include/dataset/online_business.csv 
+Data loaded from https://www.kaggle.com/datasets/tunguz/online-retail and saved to include/dataset/online_business.csv 
 
 Dataset Information:
 
@@ -391,13 +391,13 @@ CustomerID: Customer number. Nominal, a 5-digit integral number uniquely assigne
 Country: Country name. Nominal, the name of the country where each customer resides.
 
 
-Updated Country   EIRE to Ireland  (8196) records.
+Updated Country   EIRE to Ireland  (8196) records and converted to utf-8 .
 
 
-1.2 country.csv 
+2 country.csv 
 
 
-2 gbp_monthly_avg_2010_2026.csv
+3 gbp_monthly_avg_2010_2026.csv
 
 Run Dag  gbp_monthly_avg_to_gcs.py
 
@@ -405,11 +405,13 @@ Download from GCS bucket and save include/dataset/currency_rates_gbp_monthly_avg
 
 
 
-### Airflow DAG Flow 
+### Step 4:  Airflow DAG Run
 
 astro dev start  executed
 
 Access Airflow UI at http://localhost:8080
+
+Run below Dags
 
 
 #### Currency rates GBP to USD & EUR 2010-2026 Dag
@@ -426,10 +428,7 @@ http://localhost:8080/dags/online_business/
 
 
 
-
-
-
-## Google Data Studio 
+### Step 5: Google Data Studio 
 
 - Open [DataStudio](https://datastudio.google.com)
 
@@ -444,7 +443,7 @@ http://localhost:8080/dags/online_business/
 
 
 
-#### Clean up
+### Step 6: Clean up
 
 ```
 astro dev stop 
