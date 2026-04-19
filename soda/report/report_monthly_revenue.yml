@@ -1,0 +1,4 @@
+checks for report_monthly_revenue:
+  # Check fails if the number of invoices for a year is negative
+  - min(total_revenue_gbp):
+      fail: when < 0
