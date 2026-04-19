@@ -1,5 +1,8 @@
 checks for raw_currency_rates:
-  - row_count > 0
-  - missing_count(year_month) = 0
-  - missing_count(avg_rate_gpb_usd) = 0
-  - missing_count(avg_rate_gpb_eur) = 0
+  - schema:
+      fail:
+        when required column missing: [year_month, avg_rate_gpb_usd, avg_rate_gpb_eur]
+        when wrong column type:
+          year_month: string
+          avg_rate_gpb_usd: float64
+          avg_rate_gpb_eur: float64

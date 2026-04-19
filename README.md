@@ -3,7 +3,7 @@
 An online business operates across multiple countries and accumulates transactional invoice data in flat CSV files. The business has no centralised analytics capability — data stored locally in different files, unvalidated, and unavailable for reporting. The goal of this project is to build an end-to-end data pipeline that ingests raw business data, connect with currency rates, then transforms it into a dimensional model, validates data quality at each stage, and makes it available for business intelligence reporting in Google Data Studio.
 
 
-# Problem Statement
+## Problem Statement
 
 A UK-based online retail business sells across 37 countries and generates thousands of invoice transactions per month. Despite this volume, the business had no analytics capability:
 
@@ -242,42 +242,60 @@ Airflow task (@task.external_python)
 
 | Airflow task | checks_subpath | Runs after | Purpose |
 |---|---|---|---|
-| `check_load` | `sources` | Raw BQ load | Validate raw tables before any transformation |
-| `check_transform` | `transform` | dbt transform | Validate dimensional model integrity |
+| `check_load` | `sources` | Raw BQ load | Validate raw table schema and nulls before any transformation |
+| `check_transform` | `transform` | dbt transform | Validate dimensional model schema, uniqueness, and integrity |
 | `check_report` | `report` | dbt report | Validate report tables before BI consumption |
 
 ### Checks per table
 
 **Sources** — run after `gcs_*_to_bq_raw` tasks
 
-| Table | Checks |
-|---|---|
-| `raw_invoices` | row_count > 0 · no nulls in InvoiceNo, StockCode, Quantity, UnitPrice |
-| `raw_currency_rates` | row_count > 0 · no nulls in year_month, avg_rate_gbp_usd, avg_rate_gbp_eur |
-| `country` | row_count > 0 · no nulls in id, iso, nicename |
+| Table | Check type | Detail |
+|---|---|---|
+| `raw_invoices` | Schema | Required columns: InvoiceNo, StockCode, Quantity, InvoiceDate, UnitPrice, CustomerID, Country |
+| `raw_invoices` | Schema | Column types: Quantity → integer, UnitPrice/CustomerID → float64, others → string |
+| `raw_currency_rates` | Schema | Required columns: year_month, avg_rate_gpb_usd, avg_rate_gpb_eur |
+| `raw_currency_rates` | Schema | Column types: year_month → string, rates → float64 |
+| `country` | Nulls | No nulls in id, iso, nicename · row_count > 0 |
 
 **Transform** — run after dbt transform models
 
-| Table | Checks |
-|---|---|
-| `dim_customers` | row_count > 0 · no nulls in customer_id |
-| `fct_invoices` | row_count > 0 · no nulls in invoice_no |
+| Table | Check type | Detail |
+|---|---|---|
+| `dim_customers` | Schema | Required columns: customer_id, country · types: string |
+| `dim_customers` | Uniqueness | No duplicate customer_id values |
+| `dim_customers` | Nulls | No nulls in customer_id |
+| `fct_invoices` | Schema | Required columns: invoice_id, product_id, customer_id, datetime_id, quantity, total_invoice_gbp |
+| `fct_invoices` | Schema | Column types: IDs → string, quantity → int, total_invoice_gbp → float64 |
+| `fct_invoices` | Nulls | No nulls in invoice_id |
+| `fct_invoices` | Custom SQL | No rows where total_invoice_gbp < 0 (catches unfiltered cancellations) |
 
 **Report** — run after dbt report models
 
-| Table | Checks |
-|---|---|
-| `report_monthly_revenue` | row_count > 0 |
+| Table | Check type | Detail |
+|---|---|---|
+| `report_monthly_revenue` | Schema | Required columns: year, month, num_invoices, total_quantity, total_revenue_gbp, total_revenue_usd, total_revenue_eur |
+| `report_monthly_revenue` | Row count | row_count > 0 |
+| `report_monthly_revenue` | Nulls | No nulls in month |
 
 ### Adding new checks
 
-Drop a `.yml` file into the relevant `include/soda/checks/<subpath>/` directory using [SodaCL syntax](https://docs.soda.io/soda-cl/soda-cl-overview.html):
+Drop a `.yml` file into the relevant `include/soda/checks/<subpath>/` directory using [SodaCL syntax](https://docs.soda.io/soda-cl/soda-cl-overview.html). Soda picks up all `.yml` files in the directory automatically.
 
 ```yaml
 checks for <table_name>:
-  - row_count > 0
-  - missing_count(column_name) = 0
-  - duplicate_count(column_name) = 0
+  - schema:
+      fail:
+        when required column missing: [col1, col2]
+        when wrong column type:
+          col1: string
+          col2: float64
+  - missing_count(col1) = 0:
+      name: Descriptive check name
+  - failed rows:
+      name: Custom business rule
+      fail query: |
+        SELECT id FROM <table_name> WHERE <condition>
 ```
 
 Soda picks up all `.yml` files in the directory automatically — no code changes needed.
@@ -323,17 +341,6 @@ Total Revenue (USD) vs No. Invoices by Country
 
 Circle colour intensity represents Total Revenue USD (up to $11,672,540)
 The large dark bubble sitting over Western Europe is UK. The smaller, lighter bubbles scattered across Europe, North America, Asia and Australia represent the long-tail markets from the bar chart. The map legend confirms the largest revenue bubble reaches $11,672,540.
-
-
-
-
-
-
-
-
-
-
-
 
 
 

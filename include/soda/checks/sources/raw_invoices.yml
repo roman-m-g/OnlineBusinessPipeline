@@ -1,6 +1,12 @@
 checks for raw_invoices:
-  - row_count > 0
-  - missing_count(InvoiceNo) = 0
-  - missing_count(StockCode) = 0
-  - missing_count(Quantity) = 0
-  - missing_count(UnitPrice) = 0
+  - schema:
+      fail:
+        when required column missing: [InvoiceNo, StockCode, Quantity, InvoiceDate, UnitPrice, CustomerID, Country]
+        when wrong column type:
+          InvoiceNo: string
+          StockCode: string
+          Quantity: integer
+          InvoiceDate: string
+          UnitPrice: float64
+          CustomerID: float64
+          Country: string
