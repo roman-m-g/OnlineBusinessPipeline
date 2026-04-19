@@ -12,7 +12,9 @@ airflow/.env
 
 include/keys/
 include/dataset/
+include/dbt/target/*.json
 
 wip/
 
+airflow_settings.yaml
 
