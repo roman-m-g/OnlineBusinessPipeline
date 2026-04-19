@@ -1,0 +1,5 @@
+checks for country:
+  - row_count > 0
+  - missing_count(id) = 0
+  - missing_count(iso) = 0
+  - missing_count(nicename) = 0

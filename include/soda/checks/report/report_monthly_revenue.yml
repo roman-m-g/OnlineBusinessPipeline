@@ -1,0 +1,2 @@
+checks for report_monthly_revenue:
+  - row_count > 0

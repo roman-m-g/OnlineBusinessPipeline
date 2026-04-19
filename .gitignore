@@ -11,9 +11,6 @@ airflow/.env
 *.tfstate.backup
 
 include/keys/
-include/dbt/target/
-include/dbt_packages/
-include/dbt/logs/
 
 wip/
 

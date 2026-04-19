@@ -1,13 +1,3 @@
-# data_source adventureworks:
-#   type: postgres
-#   host: localhost
-#   username: postgres
-#   password: secret
-#   database: postgres
-#   schema: public
-
-
-
 data_source online_business:
   type: bigquery
   connection:

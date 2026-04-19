@@ -1,0 +1,6 @@
+checks for raw_invoices:
+  - row_count > 0
+  - missing_count(InvoiceNo) = 0
+  - missing_count(StockCode) = 0
+  - missing_count(Quantity) = 0
+  - missing_count(UnitPrice) = 0

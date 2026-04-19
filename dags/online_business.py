@@ -35,18 +35,58 @@ def online_business():
         hook.upload(
             bucket_name='obp-486617',
             object_name='raw/currencyrates.csv',
-            filename='include/dataset/currency_rates_gbp_monthly_avg_2010-2026.csv',
+            filename='include/dataset/currency_rates_gbp_monthly_avg_2010_2026.csv',
             mime_type='text/csv',
         )
 
-    # @task
-    # def create_online_business_dataset() -> None:
-    #     hook = BigQueryHook(gcp_conn_id='gcp')
-    #     hook.create_empty_dataset(
-    #         dataset_id='online_business',
-    #         location='EU',
-    #         exists_ok=True,
-    #     )
+    @task
+    def upload_country_to_gcs() -> None:
+        hook = GCSHook(gcp_conn_id='gcp')
+        hook.upload(
+            bucket_name='obp-486617',
+            object_name='raw/country.csv',
+            filename='include/dataset/country.csv',
+            mime_type='text/csv',
+        )
+
+    @task
+    def gcs_country_to_bq_raw() -> None:
+        hook = BigQueryHook(gcp_conn_id='gcp')
+        job_config = {
+            'load': {
+                'destinationTable': {
+                    'projectId': hook.project_id,
+                    'datasetId': 'online_business',
+                    'tableId': 'country',
+                },
+                'sourceUris': ['gs://obp-486617/raw/country.csv'],
+                'sourceFormat': 'CSV',
+                'skipLeadingRows': 1,
+                'writeDisposition': 'WRITE_TRUNCATE',
+                'encoding': 'UTF-8',
+                'schema': {
+                    'fields': [
+                        {'name': 'id',        'type': 'INTEGER', 'mode': 'NULLABLE'},
+                        {'name': 'iso',       'type': 'STRING',  'mode': 'NULLABLE'},
+                        {'name': 'name',      'type': 'STRING',  'mode': 'NULLABLE'},
+                        {'name': 'nicename',  'type': 'STRING',  'mode': 'NULLABLE'},
+                        {'name': 'iso3',      'type': 'STRING',  'mode': 'NULLABLE'},
+                        {'name': 'numcode',   'type': 'INTEGER', 'mode': 'NULLABLE'},
+                        {'name': 'phonecode', 'type': 'INTEGER', 'mode': 'NULLABLE'},
+                    ]
+                },
+            }
+        }
+        hook.insert_job(configuration=job_config)
+
+    @task
+    def create_online_business_dataset() -> None:
+        hook = BigQueryHook(gcp_conn_id='gcp')
+        hook.create_empty_dataset(
+            dataset_id='online_business',
+            location='EU',
+            exists_ok=True,
+        )
 
     @task
     def gcs_online_business_to_bq_raw() -> None:
@@ -117,7 +157,7 @@ def online_business():
         project_config=DBT_PROJECT_CONFIG,
         profile_config=DBT_CONFIG,
         render_config=RenderConfig(
-            load_method=LoadMode.DBT_LS,
+            load_method=LoadMode.DBT_MANIFEST,
             select=['path:models/transform'],
         ),
         execution_config=ExecutionConfig(
@@ -139,7 +179,7 @@ def online_business():
         project_config=DBT_PROJECT_CONFIG,
         profile_config=DBT_CONFIG,
         render_config=RenderConfig(
-            load_method=LoadMode.DBT_LS,
+            load_method=LoadMode.DBT_MANIFEST,
             select=['path:models/report'],
         ),
         execution_config=ExecutionConfig(
@@ -159,14 +199,17 @@ def online_business():
 
     upload_ob = upload_online_business_to_gcs()
     upload_cr = upload_currency_rates_to_gcs()
+    upload_country = upload_country_to_gcs()
     raw_ob = gcs_online_business_to_bq_raw()
     raw_cr = gcs_currency_rates_to_bq_raw()
+    raw_country = gcs_country_to_bq_raw()
     check = check_load()
 
-    start >> [upload_ob, upload_cr]
+    start >> [upload_ob, upload_cr, upload_country]
     upload_ob >> raw_ob
     upload_cr >> raw_cr
-    [raw_ob, raw_cr] >> check >> transform >> check_transform() >> report >> check_report() >> finish
+    upload_country >> raw_country
+    [raw_ob, raw_cr, raw_country] >> check >> transform >> check_transform() >> report >> check_report() >> finish
 
 
 online_business()

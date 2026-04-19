@@ -1,0 +1,25 @@
+name: 'online_business'
+version: '1.0.0'
+config-version: 2
+
+profile: 'online_business'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  online_business:
+    transform:
+      +materialized: table
+      +schema: online_business
+    report:
+      +materialized: table
+      +schema: online_business

@@ -1,0 +1,12 @@
+online_business:
+ target: dev
+ outputs:
+  dev:
+    type: bigquery
+    method: service-account
+    keyfile: /usr/local/airflow/include/keys/de-project-creds.json
+    project: de-project-486617
+    dataset: online_business
+    threads: 1
+    timeout_seconds: 300
+    location: EU

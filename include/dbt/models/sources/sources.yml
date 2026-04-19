@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: online_business
+    database: de-project-486617
+
+    tables:
+      - name: raw_invoices
+      - name: raw_currency_rates
+      - name: country

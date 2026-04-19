@@ -1,0 +1,5 @@
+checks for raw_currency_rates:
+  - row_count > 0
+  - missing_count(year_month) = 0
+  - missing_count(avg_rate_gpb_usd) = 0
+  - missing_count(avg_rate_gpb_eur) = 0
