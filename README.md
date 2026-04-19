@@ -20,7 +20,7 @@ An online business operates across multiple countries and accumulates transactio
 
 ## Reproducibility Steps
 
-Step 1: Clone repo 
+Step 1: Clone repo and setup
 
 ### Provision Infrastructure with Terraform (first time)
 ```
@@ -38,15 +38,15 @@ terraform destroy
 ## Prerequisites
 
 ```
-1 GCP Account (billing enabled)
-2 Service Account with roles: Storage Admin, BigQuery Admin
-3 Service Account Key (JSON) saved as keys/de-project-creds.json
-4 Terraform installed
-5 Docker and Docker Compose
-6 Python 3.12+
+1 Terraform installed
+2 Docker and Docker Compose
+3 Python 3.12+
+4 GCP Account (billing enabled)
+5 Service Account with roles: Storage Admin, BigQuery Admin
+6 Service Account Key (JSON) saved as keys/de-project-creds.json
 7 Google Data Studio
 ```
 
-Step 2: astro cli
+Step 2: Install and setup astro cli
 
-
+Step 3: Download datasets
