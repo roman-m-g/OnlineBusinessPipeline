@@ -53,19 +53,14 @@ The pipeline follows an **ELT** pattern: raw data is landed in a cloud data lake
 
 | Type | Tool | Location |
 |---|---|---|
-| Cloud | Google Cloud  | GCS, BQ. AIM |
+| Cloud | Google Cloud (GCS, BigQuery, IAM) | GCP |
 | Orchestration | Apache Airflow 3.x (Astronomer Runtime) | Docker / Astro CLI |
 | Infrastructure | Terraform | GCS bucket + BigQuery dataset |
-
-| Batch processing | Python, Airflow DAG, | dags/ |
-
-| Data Modelling | dbt Core 1.11 + Cosmos | include/dbt/models/ |
-
-| Data Warehouse | Google BigQuery | include/dbt/models/ |
-
-| Data Quality testing | Soda Core (`soda-core-bigquery`) | `include/soda/ |
-
-| Visualisation & reporting| Google Data Studio | Connected to BigQuery report layer |
+| Batch processing | Python, Airflow DAG | `dags/` |
+| Data Modelling | dbt Core 1.11 + Cosmos | `include/dbt/models/` |
+| Data Warehouse | Google BigQuery | `online_business` dataset |
+| Data Quality | Soda Core (`soda-core-bigquery`) | `include/soda/` |
+| Visualisation | Google Data Studio (Looker Studio) | Connected to BigQuery report layer |
 
 
 ### Datasets 
@@ -82,15 +77,16 @@ Attribute Information:
 
 
 
+| Field | Description |
 |---|---|
-| InvoiceNo: |  Invoice number. Nominal, a 6-digit integral number uniquely assigned to each transaction. If this code starts with letter 'c', it indicates a cancellation. |
-| StockCode: |  Product (item) code. Nominal, a 5-digit integral number uniquely assigned to each distinct product. |
-| Description: |  Product (item) name. Nominal. |
-| Quantity: |  The quantities of each product (item) per transaction. Numeric. |
-| InvoiceDate: | Invice Date and time. Numeric, the day and time when each transaction was generated. |
-| UnitPrice: | Unit price. Numeric, Product price per unit in sterling. |
-| CustomerID: | Customer number. Nominal, a 5-digit integral number uniquely assigned to each customer. |
-| Country: | Country name. Nominal, the name of the country where each customer resides. |
+| InvoiceNo | Invoice number. Nominal, a 6-digit integral number uniquely assigned to each transaction. If this code starts with letter 'c', it indicates a cancellation. |
+| StockCode | Product (item) code. Nominal, a 5-digit integral number uniquely assigned to each distinct product. |
+| Description | Product (item) name. Nominal. |
+| Quantity | The quantities of each product (item) per transaction. Numeric. |
+| InvoiceDate | Invoice date and time. The day and time when each transaction was generated. |
+| UnitPrice | Unit price. Product price per unit in sterling. Numeric. |
+| CustomerID | Customer number. Nominal, a 5-digit integral number uniquely assigned to each customer. |
+| Country | Country name. Nominal, the name of the country where each customer resides. |
 
 2 country.csv 
 
