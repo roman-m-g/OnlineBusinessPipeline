@@ -1,6 +1,6 @@
 # Online Business Pipeline
 
-An online business operates across multiple countries and accumulates transactional invoice data in flat CSV files. The business has no centralised analytics capability — data stored locally in different files, unvalidated, and unavailable for reporting. The goal of this project is to build an end-to-end data pipeline that ingests raw business data, connect with currency rates, then transforms it into a dimensional model, validates data quality at each stage, and makes it available for business intelligence reporting in Google Data Studio.
+An online business operates across multiple countries and accumulates transactional invoice data in flat CSV files. The business has no centralised analytics capability — data stored locally in different files, unvalidated, and unavailable for reporting. The goal of this project is to build an end-to-end batch data pipeline that ingests raw business data, connect with currency rates, coutries then transforms it into a dimensional model, validates data quality at each stage, and makes it available for business intelligence reporting in Google Data Studio.
 
 
 ## Problem Statement
@@ -48,19 +48,24 @@ The pipeline follows an **ELT** pattern: raw data is landed in a cloud data lake
 
 
 
-## Tech Stack
+## Technologies
 
 
-| Layer | Tool | Location |
+| Type | Tool | Location |
 |---|---|---|
+| Cloud | Google Cloud  | GCS, BQ. AIM |
 | Orchestration | Apache Airflow 3.x (Astronomer Runtime) | Docker / Astro CLI |
 | Infrastructure | Terraform | GCS bucket + BigQuery dataset |
-| Data Lake | Google Cloud Storage | `gs://obp-486617/raw/` |
-| Raw Load | BigQuery Load Jobs via `BigQueryHook` | `online_business.*_raw` tables |
-| Data Quality | Soda Core (`soda-core-bigquery`) | `include/soda/checks/` |
-| Transform | dbt Core 1.11 + Cosmos (`dbt-bigquery`) | `include/dbt/models/transform/` |
-| Report Models | dbt Core 1.11 + Cosmos | `include/dbt/models/report/` |
-| Visualisation | Google Data Studio | Connected to BigQuery report layer |
+
+| Batch processing | Python, Airflow DAG, | dags/ |
+
+| Data Modelling | dbt Core 1.11 + Cosmos | include/dbt/models/ |
+
+| Data Warehouse | Google BigQuery | include/dbt/models/ |
+
+| Data Quality testing | Soda Core (`soda-core-bigquery`) | `include/soda/ |
+
+| Visualisation & reporting| Google Data Studio | Connected to BigQuery report layer |
 
 
 
@@ -317,7 +322,7 @@ Circle colour intensity represents Total Revenue USD (up to $11,672,540)
 The large dark bubble sitting over Western Europe is UK. The smaller, lighter bubbles scattered across Europe, North America, Asia and Australia represent the long-tail markets from the bar chart. The map legend confirms the largest revenue bubble reaches $11,672,540.
 
 
-
+[Online Business Dashboard](https://datastudio.google.com/u/0/reporting/f018e860-96d8-444b-8aa9-3bad8caa32b7/page/p_mmdzr03u2d)
 
 
 
@@ -456,7 +461,7 @@ http://localhost:8080/dags/online_business/
 
 - Add report_country_revenue, report_customer_segments, report_monthly_revenue, and report_product_performance tables
 
-- Build the two-page [dashboard](https://datastudio.google.com/s/uBT4DbZvENc)
+- Build the two-page dashboard
 
 
 

@@ -2,8 +2,8 @@ WITH datetime_cte AS (
   SELECT DISTINCT
     InvoiceDate AS datetime_id,
     COALESCE(
-      SAFE.PARSE_DATETIME('%m/%d/%Y %H:%M', InvoiceDate),
-      SAFE.PARSE_DATETIME('%m/%d/%y %H:%M', InvoiceDate)
+      SAFE.PARSE_DATETIME('%m/%d/%y %H:%M', InvoiceDate),
+      SAFE.PARSE_DATETIME('%m/%d/%Y %H:%M', InvoiceDate)
     ) AS date_part
   FROM {{ source('online_business', 'raw_invoices') }}
   WHERE InvoiceDate IS NOT NULL

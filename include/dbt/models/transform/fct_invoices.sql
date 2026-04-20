@@ -23,7 +23,7 @@ FROM fct_invoices_cte fi
 INNER JOIN {{ ref('dim_datetime') }} dt ON fi.datetime_id = dt.datetime_id
 INNER JOIN {{ ref('dim_product') }} dp ON fi.product_id = dp.product_id
 INNER JOIN {{ ref('dim_customers') }} dc ON fi.customer_id = dc.customer_id
-LEFT JOIN {{ source('online_business', 'raw_currency_rates') }} cr
+LEFT JOIN {{ ref('dim_currency_rates') }} cr
     ON FORMAT('%04d-%02d', dt.year, dt.month) = cr.year_month
 
 

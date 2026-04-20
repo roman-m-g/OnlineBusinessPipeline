@@ -19,7 +19,5 @@ models:
   online_business:
     transform:
       +materialized: table
-      +schema: online_business
     report:
       +materialized: table
-      +schema: online_business

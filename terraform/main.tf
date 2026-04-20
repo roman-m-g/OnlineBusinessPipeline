@@ -30,3 +30,8 @@ resource "google_storage_bucket" "demo-bucket" {
     }
   }
 }
+
+# resource "google_bigquery_dataset" "online_business" {
+#   dataset_id = var.bq_dataset
+#   location   = var.location
+# }

@@ -26,3 +26,7 @@ variable "gcs_storage_class" {
   default     = "STANDARD"
 }
 
+# variable "bq_dataset" {
+#   description = "BigQuery dataset"
+#   default     = "online_business"
+# }

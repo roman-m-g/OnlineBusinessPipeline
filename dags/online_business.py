@@ -197,6 +197,7 @@ def online_business():
     start = EmptyOperator(task_id='start')
     finish = EmptyOperator(task_id='finish')
 
+    create_ds = create_online_business_dataset()
     upload_ob = upload_online_business_to_gcs()
     upload_cr = upload_currency_rates_to_gcs()
     upload_country = upload_country_to_gcs()
@@ -205,7 +206,7 @@ def online_business():
     raw_country = gcs_country_to_bq_raw()
     check = check_load()
 
-    start >> [upload_ob, upload_cr, upload_country]
+    start >> create_ds >> [upload_ob, upload_cr, upload_country]
     upload_ob >> raw_ob
     upload_cr >> raw_cr
     upload_country >> raw_country
