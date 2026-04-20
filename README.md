@@ -305,7 +305,7 @@ This compares invoice count month by month between 2011 (blue) and 2010 (orange)
 The growth trend in invoice count mirrors the revenue trend above, confirming the business is growing through more transactions, not just higher order values.
 
 
-![DataStudioGeorgraphicAnalysis](pics/DataStudioGeorgraphicAnalysis.png)
+![DataStudioGeorgraphicAnalysis](pics/DataStudioGeographicAnalysis.png)
 [Data Studio dashboard](https://datastudio.google.com/s/uBT4DbZvENc)
 
 
