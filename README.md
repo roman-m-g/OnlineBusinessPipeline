@@ -427,8 +427,6 @@ astro dev restart
 
 Data loaded from https://www.kaggle.com/datasets/tunguz/online-retail and saved to include/dataset/online_business.csv 
 
-Dataset Information:
-
 Updated Country   EIRE to Ireland  (8196) records and converted to utf-8 .
 
 
@@ -466,7 +464,7 @@ http://localhost:8080/dags/online_business/
 
 
 
-### Step 5: Google Data Studio 
+### Step 5: Google Data Studio
 
 - Open [DataStudio](https://datastudio.google.com)
 
