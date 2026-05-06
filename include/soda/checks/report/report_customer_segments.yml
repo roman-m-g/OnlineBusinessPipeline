@@ -1,27 +1,40 @@
-checks for report_customer_segments:
-  - schema:
-      fail:
-        when required column missing:
-          [customer_id, country, iso, num_orders, total_quantity,
-           total_revenue_gbp, total_revenue_usd, total_revenue_eur, avg_order_value_gbp]
-        when wrong column type:
-          customer_id: string
-          country: string
-          iso: string
-          num_orders: int
-          total_quantity: int
-          total_revenue_gbp: float64
-          total_revenue_usd: float64
-          total_revenue_eur: float64
-          avg_order_value_gbp: float64
-  - row_count > 0
-  - missing_count(customer_id) = 0:
-      name: All segments have a customer key
-  - duplicate_count(customer_id) = 0:
-      name: One row per customer
-  - failed rows:
+dataset: online_business/online_business/report_customer_segments
+
+columns:
+  - name: customer_id
+    data_type: string
+    not_null: true
+    unique: true
+  - name: country
+    data_type: string
+    not_null: false
+  - name: iso
+    data_type: string
+    not_null: false
+  - name: num_orders
+    data_type: integer
+    not_null: false
+  - name: total_quantity
+    data_type: integer
+    not_null: false
+  - name: total_revenue_gbp
+    data_type: float64
+    not_null: false
+  - name: total_revenue_usd
+    data_type: float64
+    not_null: false
+  - name: total_revenue_eur
+    data_type: float64
+    not_null: false
+  - name: avg_order_value_gbp
+    data_type: float64
+    not_null: false
+
+checks:
+  - row_count:
+  - failed_rows:
       name: No negative average order values
-      fail query: |
+      query: |
         SELECT customer_id, avg_order_value_gbp
-        FROM report_customer_segments
+        FROM online_business.report_customer_segments
         WHERE avg_order_value_gbp < 0

@@ -1,23 +1,25 @@
-checks for dim_product:
-  - schema:
-      fail:
-        when required column missing: [product_id, description, price]
-        when wrong column type:
-          product_id: string
-          description: string
-          price: float64
-  # Check fails when customer_id is not unique
-  - duplicate_count(product_id) = 0:
-      name: All products are unique
-  # Check fails when any NULL values exist in the column
-  - missing_count(product_id) = 0:
-      name: All products have a key
-  # Check fails when any prices are negative
-  - min(price):
-      fail: when < 0
+dataset: online_business/online_business/dim_product
 
-# checks for dim_product:
-#   - schema:
-#       fail:
-#         when required column missing: [product_id, stock_code, description, price]
-#   - row_count > 0
+columns:
+  - name: product_id
+    data_type: string
+    not_null: true
+    unique: true
+  - name: stock_code
+    data_type: string
+    not_null: false
+  - name: description
+    data_type: string
+    not_null: false
+  - name: price
+    data_type: float64
+    not_null: false
+
+checks:
+  - row_count:
+  - failed_rows:
+      name: No negative or zero product prices
+      query: |
+        SELECT product_id, price
+        FROM online_business.dim_product
+        WHERE price <= 0

@@ -1,9 +1,27 @@
-checks for report_monthly_revenue:
-  - schema:
-      fail:
-        when required column missing: [year, month, num_invoices, total_quantity, total_revenue_gbp,total_revenue_usd,total_revenue_eur]
-  - row_count > 0
-  - missing_count(year) = 0:
-      name: all rows have a year 
-  - missing_count(month) = 0:
-      name: all rows have a month 
+dataset: online_business/online_business/report_monthly_revenue
+
+columns:
+  - name: year
+    data_type: integer
+    not_null: true
+  - name: month
+    data_type: integer
+    not_null: true
+  - name: num_invoices
+    data_type: integer
+    not_null: false
+  - name: total_quantity
+    data_type: integer
+    not_null: false
+  - name: total_revenue_gbp
+    data_type: float64
+    not_null: false
+  - name: total_revenue_usd
+    data_type: float64
+    not_null: false
+  - name: total_revenue_eur
+    data_type: float64
+    not_null: false
+
+checks:
+  - row_count:

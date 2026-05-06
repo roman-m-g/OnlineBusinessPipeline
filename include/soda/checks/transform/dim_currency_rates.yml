@@ -1,19 +1,22 @@
-checks for dim_currency_rates:
-  - schema:
-      fail:
-        when required column missing: [year_month, avg_rate_gpb_usd, avg_rate_gpb_eur]
-        when wrong column type:
-          year_month: string
-          avg_rate_gpb_usd: float64
-          avg_rate_gpb_eur: float64
-  - row_count > 0
-  - missing_count(year_month) = 0:
-      name: All currency rates have a year_month key
-  - duplicate_count(year_month) = 0:
-      name: No duplicate year_month entries
-  - failed rows:
+dataset: online_business/online_business/dim_currency_rates
+
+columns:
+  - name: year_month
+    data_type: string
+    not_null: true
+    unique: true
+  - name: avg_rate_gpb_usd
+    data_type: float64
+    not_null: true
+  - name: avg_rate_gpb_eur
+    data_type: float64
+    not_null: true
+
+checks:
+  - row_count:
+  - failed_rows:
       name: No zero or negative exchange rates
-      fail query: |
+      query: |
         SELECT year_month, avg_rate_gpb_usd, avg_rate_gpb_eur
-        FROM dim_currency_rates
+        FROM online_business.dim_currency_rates
         WHERE avg_rate_gpb_usd <= 0 OR avg_rate_gpb_eur <= 0

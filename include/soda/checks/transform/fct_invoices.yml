@@ -1,29 +1,36 @@
-checks for fct_invoices:
-  - schema:
-      fail:
-        when required column missing: 
-          [invoice_id, product_id, customer_id, datetime_id, quantity, total_invoice_gbp]
-        when wrong column type:
-          invoice_id: string
-          product_id: string
-          customer_id: string
-          datetime_id: string
-          quantity: int
-          total_invoice_gbp: float64
-  # Check fails when NULL values in the column
-  - missing_count(invoice_id) = 0:
-      name: All invoices have a key
-  # Check fails when the total of any invoices is negative
-  - failed rows:
-      name: All invoices have a positive total amount
-      fail query: |
-        SELECT invoice_id, total_invoice_gbp
-        FROM fct_invoices
-        WHERE total_invoice_gbp < 0
+dataset: online_business/online_business/fct_invoices
 
-# checks for fct_invoices:
-#   - schema:
-#       fail:
-#         when required column missing: [invoice_id, datetime_id, product_id, customer_id, quantity, total_invoice_gbp]
-#   - row_count > 0
-#   - missing_count(invoice_id) = 0
+columns:
+  - name: invoice_id
+    data_type: string
+    not_null: true
+  - name: datetime_id
+    data_type: string
+    not_null: false
+  - name: product_id
+    data_type: string
+    not_null: false
+  - name: customer_id
+    data_type: string
+    not_null: false
+  - name: quantity
+    data_type: integer
+    not_null: false
+  - name: total_invoice_gbp
+    data_type: float64
+    not_null: false
+  - name: total_invoice_usd
+    data_type: float64
+    not_null: false
+  - name: total_invoice_eur
+    data_type: float64
+    not_null: false
+
+checks:
+  - row_count:
+  - failed_rows:
+      name: No negative invoice totals
+      query: |
+        SELECT invoice_id, total_invoice_gbp
+        FROM online_business.fct_invoices
+        WHERE total_invoice_gbp < 0

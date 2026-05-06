@@ -1,7 +1,18 @@
-checks for report_product_invoices:
-  - schema:
-      fail:
-        when required column missing: [product_id, stock_code, description, total_quantity_sold]
-  - row_count > 0
-  - missing_count(product_id) = 0:
-      name: all rows have a product
+dataset: online_business/online_business/report_product_invoices
+
+columns:
+  - name: product_id
+    data_type: string
+    not_null: true
+  - name: stock_code
+    data_type: string
+    not_null: false
+  - name: description
+    data_type: string
+    not_null: false
+  - name: total_quantity_sold
+    data_type: integer
+    not_null: false
+
+checks:
+  - row_count:

@@ -150,7 +150,7 @@ def online_business():
     @task.external_python(python='/usr/local/airflow/soda_venv/bin/python')
     def check_load(scan_name='check_load', checks_subpath='sources'):
         from include.soda.check_function import check
-        return check(scan_name, checks_subpath, data_source='online_business')
+        return check(scan_name, checks_subpath)
 
     transform = DbtTaskGroup(
         group_id='transform',
@@ -171,7 +171,7 @@ def online_business():
     @task.external_python(python='/usr/local/airflow/soda_venv/bin/python')
     def check_transform(scan_name='check_transform', checks_subpath='transform'):
         from include.soda.check_function import check
-        return check(scan_name, checks_subpath, data_source='online_business')
+        return check(scan_name, checks_subpath)
 
 
     report = DbtTaskGroup(
@@ -192,7 +192,7 @@ def online_business():
     def check_report(scan_name='check_report', checks_subpath='report'):
         from include.soda.check_function import check
 
-        return check(scan_name, checks_subpath, data_source='online_business')
+        return check(scan_name, checks_subpath)
 
     start = EmptyOperator(task_id='start')
     finish = EmptyOperator(task_id='finish')

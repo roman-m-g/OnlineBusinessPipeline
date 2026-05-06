@@ -1,24 +1,37 @@
-checks for dim_datetime:
-  - schema:
-      fail:
-        when required column missing: [datetime_id, datetime]
-        when wrong column type:
-          datetime_id: string
-          datetime: datetime
-  # Check failes when weekday is not in range 0-6
-  - invalid_count(weekday) = 0:
-      name: All weekdays are in range 0-6
-      valid min: 0
-      valid max: 6
-  # Check fails when customer_id is not unique
-  - duplicate_count(datetime_id) = 0:
-      name: All datetimes are unique
-  # Check fails when any NULL values exist in the column
-  - missing_count(datetime_id) = 0:
-      name: All datetimes have a key
+dataset: online_business/online_business/dim_datetime
 
-# checks for dim_datetime:
-#   - schema:
-#       fail:
-#         when required column missing: [datetime_id, datetime, year, month, day, hour, minute, weekday]
-#   - row_count > 0
+columns:
+  - name: datetime_id
+    data_type: string
+    not_null: true
+    unique: true
+  - name: datetime
+    data_type: timestamp
+    not_null: false
+  - name: year
+    data_type: integer
+    not_null: false
+  - name: month
+    data_type: integer
+    not_null: false
+  - name: day
+    data_type: integer
+    not_null: false
+  - name: hour
+    data_type: integer
+    not_null: false
+  - name: minute
+    data_type: integer
+    not_null: false
+  - name: weekday
+    data_type: integer
+    not_null: false
+
+checks:
+  - row_count:
+  - failed_rows:
+      name: Weekday in valid range 1-7
+      query: |
+        SELECT datetime_id, weekday
+        FROM online_business.dim_datetime
+        WHERE weekday < 1 OR weekday > 7

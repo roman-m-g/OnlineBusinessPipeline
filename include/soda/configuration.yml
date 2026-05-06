@@ -1,10 +1,7 @@
-data_source online_business:
-  type: bigquery
+name: online_business
+type: bigquery
+connection:
   account_info_json_path: /usr/local/airflow/include/keys/de-project-creds.json
-  auth_scopes:
-    - https://www.googleapis.com/auth/bigquery
-    - https://www.googleapis.com/auth/cloud-platform
-    - https://www.googleapis.com/auth/drive
   project_id: de-project-486617
   dataset: online_business
   location: EU

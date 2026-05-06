@@ -8,3 +8,4 @@ astro-sdk-python[google]>=1.8.0
 astronomer-cosmos[dbt-bigquery]
 openlineage-integration-common==1.26.0
 protobuf
+openpyxl
